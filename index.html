@@ -6,16 +6,22 @@
   <title>MediSafe – เว็บข้อมูลฉุกเฉิน</title>
   <meta name="description" content="MediSafe: เว็บสำหรับกรอก/แสดงข้อมูลทางการแพทย์ส่วนบุคคล การแจ้งเตือนยา และเบอร์ฉุกเฉิน" />
 
-  <!-- Favicon / App Icons (เพิ่มโลโก้บน URL/แท็บเบราว์เซอร์) -->
+  <!-- Favicon / App Icons -->
   <link rel="icon" href="medisafelogo.png" type="image/png" />
   <link rel="apple-touch-icon" href="medisafelogo.png" />
   <meta property="og:image" content="medisafelogo.png" />
+
+  <!-- Google Font: Anuphan -->
+  <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
   <!-- Tailwind (CDN) -->
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
     :root{--brand:#175f5c}
+    body{
+      font-family: "Anuphan",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,"Noto Sans Thai",sans-serif;
+    }
     .brand{color:var(--brand)}
     .brand-bg{background:var(--brand)}
     .glass{backdrop-filter: blur(10px); background:rgba(255,255,255,.7)}
@@ -23,7 +29,7 @@
     .tab-btn[aria-selected="true"]{background:var(--brand); color:#fff}
     .pill{border-radius:999px}
 
-    /* ---- เพิ่มความสมูท ---- */
+    /* Smooth UI */
     *{scroll-behavior:smooth}
     .smooth{transition: all .25s ease}
     .smooth-fast{transition: all .18s ease}
@@ -31,25 +37,16 @@
     .press:active{transform: translateY(1px); filter:brightness(.98)}
     .focus-ring:focus-visible{outline:3px solid color-mix(in oklab, var(--brand) 70%, white 30%); outline-offset:3px; border-radius:12px}
 
-    /* แอนิเมชันตอนสลับแท็บ */
-    @keyframes fadeSlideIn {
-      from { opacity: 0; transform: translateY(6px) scale(.995); }
-      to   { opacity: 1; transform: translateY(0)   scale(1); }
-    }
+    @keyframes fadeSlideIn { from {opacity:0; transform: translateY(6px) scale(.995);} to {opacity:1; transform: translateY(0) scale(1);} }
     .tab-anim{ animation: fadeSlideIn .28s ease; }
 
-    /* เคารพ reduced motion */
-    @media (prefers-reduced-motion: reduce){
-      .smooth,.smooth-fast{transition:none}
-      .tab-anim{animation:none}
-    }
+    @media (prefers-reduced-motion: reduce){ .smooth,.smooth-fast{transition:none} .tab-anim{animation:none} }
   </style>
 </head>
 <body class="min-h-screen bg-gray-50 text-gray-800">
   <!-- App Shell -->
   <header class="sticky top-0 z-20 brand-bg text-white/95 shadow-sm">
     <div class="max-w-5xl mx-auto px-4 py-3 flex items-center gap-3">
-      <!-- โลโก้ในหน้า -->
       <img src="medisafelogo.png" alt="MediSafe Logo" class="w-8 h-8 rounded-xl bg-white/10 p-1 smooth" />
       <h1 class="text-lg sm:text-xl font-semibold tracking-tight">MediSafe — ข้อมูลฉุกเฉิน</h1>
       <span class="ml-auto text-xs opacity-90">เวอร์ชัน 1.0</span>
@@ -57,6 +54,21 @@
   </header>
 
   <main class="max-w-5xl mx-auto px-4 py-6">
+    <!-- Live Notification Setup (Web Push) -->
+    <div class="max-w-5xl mx-auto px-0 mb-4">
+      <details class="mt-2 card p-3 bg-white border">
+        <summary class="cursor-pointer text-sm font-medium">ตั้งค่า Live Notification (แสดงบน Lock Screen)</summary>
+        <div class="mt-2 text-sm text-gray-700 space-y-2">
+          <p>• Android ใช้ได้ทันทีหลังอนุญาต • iOS ต้องติดตั้งเป็น PWA ก่อน</p>
+          <div class="flex gap-2">
+            <button id="btnPushSetup" class="brand-bg text-white px-3 py-1.5 rounded-xl">สมัครรับการแจ้งเตือน</button>
+            <button id="btnPushTest" class="px-3 py-1.5 rounded-xl border">ทดสอบส่งแจ้งเตือน (ผ่านเซิร์ฟเวอร์)</button>
+          </div>
+          <div id="pushStatus" class="text-xs text-gray-600"></div>
+        </div>
+      </details>
+    </div>
+
     <!-- Tabs -->
     <nav class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-5">
       <button class="tab-btn card px-3 py-2 text-sm font-medium smooth elev press focus-ring" data-tab="profile" aria-selected="true">ข้อมูลส่วนบุคคล</button>
@@ -71,7 +83,7 @@
         <div class="w-8 h-8 rounded-lg brand-bg text-white flex items-center justify-center text-sm font-bold">MS</div>
         <h2 class="text-xl font-semibold brand">ข้อมูลส่วนบุคคล</h2>
       </div>
-      <p class="text-sm text-gray-600 mb-4">กรอกครั้งเดียว ระบบจะบันทึกไว้ในเครื่องของคุณ (LocalStorage) เพื่อใช้แสดงบนวิดเจ็ตและการแจ้งเตือน</p>
+      <p class="text-sm text-gray-600 mb-4">กรอกครั้งเดียว ระบบบันทึกไว้ในเครื่อง (LocalStorage) เพื่อใช้กับวิดเจ็ตและการแจ้งเตือน</p>
 
       <form id="profileForm" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
@@ -163,22 +175,10 @@
         <div class="sm:col-span-2">
           <label class="block text-sm mb-2">เลือกข้อมูลที่จะแสดงบนวิดเจ็ต</label>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <label class="flex items-center gap-2 smooth">
-              <input type="checkbox" name="showBlood" class="w-4 h-4" />
-              <span>กรุ๊ปเลือด & Rh</span>
-            </label>
-            <label class="flex items-center gap-2 smooth">
-              <input type="checkbox" name="showAllergy" class="w-4 h-4" />
-              <span>การแพ้ยา</span>
-            </label>
-            <label class="flex items-center gap-2 smooth">
-              <input type="checkbox" name="showCond" class="w-4 h-4" />
-              <span>โรคประจำตัว</span>
-            </label>
-            <label class="flex items-center gap-2 smooth">
-              <input type="checkbox" name="showICE" class="w-4 h-4" />
-              <span>เบอร์ฉุกเฉิน</span>
-            </label>
+            <label class="flex items-center gap-2 smooth"><input type="checkbox" name="showBlood" class="w-4 h-4" /><span>กรุ๊ปเลือด & Rh</span></label>
+            <label class="flex items-center gap-2 smooth"><input type="checkbox" name="showAllergy" class="w-4 h-4" /><span>การแพ้ยา</span></label>
+            <label class="flex items-center gap-2 smooth"><input type="checkbox" name="showCond" class="w-4 h-4" /><span>โรคประจำตัว</span></label>
+            <label class="flex items-center gap-2 smooth"><input type="checkbox" name="showICE" class="w-4 h-4" /><span>เบอร์ฉุกเฉิน</span></label>
           </div>
         </div>
         <div>
@@ -195,7 +195,7 @@
         </div>
         <div class="sm:col-span-2 flex items-center gap-2 mt-2">
           <button class="brand-bg text-white px-4 py-2 rounded-xl font-medium smooth elev press focus-ring">บันทึกวิดเจ็ต</button>
-          <button type="button" id="testNotif" class="px-4 py-2 rounded-xl border smooth press focus-ring">ส่งแจ้งเตือนทดสอบ</button>
+          <button type="button" id="testNotif" class="px-4 py-2 rounded-xl border smooth press focus-ring">ส่งแจ้งเตือนทดสอบ (หน้าเว็บ)</button>
           <span id="widgetStatus" class="text-sm text-gray-600"></span>
         </div>
       </form>
@@ -204,7 +204,7 @@
         <h3 class="font-semibold mb-2">พรีวิววิดเจ็ต</h3>
         <div id="widgetPreview" class="card p-4 border flex items-start gap-3 smooth elev">
           <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold" id="w-avatar">MS</div>
-          <div class="text-sm" id="w-text">—</div>
+          <div class="text-sm whitespace-pre-line" id="w-text">—</div>
         </div>
       </div>
 
@@ -212,8 +212,8 @@
         <summary class="cursor-pointer font-medium">ช่วยเหลือ: ทำไมแจ้งเตือนไม่เด้ง?</summary>
         <ul class="list-disc ml-6 mt-2 text-sm text-gray-700">
           <li>เปิดสิทธิ์ Notification ในเบราว์เซอร์ก่อน</li>
-          <li>การแจ้งเตือนแบบกำหนดเวลา จะทำงานขณะที่หน้านี้เปิดอยู่เท่านั้น (ข้อจำกัดของเว็บ)</li>
-          <li>ถ้าต้องการใช้งานออฟไลน์/หน้าจอหลัก ให้ติดตั้งเป็น PWA (ดูมุมล่างซ้าย)</li>
+          <li>แจ้งเตือนแบบกำหนดเวลาให้เด้งแม้ปิดหน้าเว็บ ต้องใช้ Web Push จากเซิร์ฟเวอร์</li>
+          <li>iOS ต้องติดตั้งเป็น PWA จึงจะรับ Web Push</li>
         </ul>
       </details>
     </section>
@@ -248,7 +248,7 @@
         </div>
         <div class="sm:col-span-3 flex items-center gap-2">
           <button class="brand-bg text-white px-4 py-2 rounded-xl font-medium smooth elev press focus-ring">เพิ่มรายการ</button>
-          <button type="button" id="startSched" class="px-4 py-2 rounded-xl border smooth press focus-ring">เริ่มเตือนอัตโนมัติ</button>
+          <button type="button" id="startSched" class="px-4 py-2 rounded-xl border smooth press focus-ring">เริ่มเตือนอัตโนมัติ (ขณะเปิดหน้า)</button>
           <span id="medStatus" class="text-sm text-gray-600"></span>
         </div>
       </form>
@@ -278,7 +278,6 @@
         <h2 class="text-xl font-semibold brand">เบอร์ฉุกเฉินสำคัญ</h2>
       </div>
       <div class="grid sm:grid-cols-2 gap-3">
-        <!-- เพิ่มเอฟเฟกต์ hover -->
         <a class="card border p-4 flex items-center gap-3 hover:bg-gray-50 smooth elev press" href="tel:1669">
           <img src="medisafelogo.png" class="w-12 h-12 rounded-2xl object-cover bg-gray-100" alt="" />
           <div>
@@ -342,14 +341,12 @@
   const store = {
     get(key, def){ try{ return JSON.parse(localStorage.getItem(key)) ?? def } catch{ return def } },
     set(key, val){ localStorage.setItem(key, JSON.stringify(val)) }
-  }
+  };
 
-  // Helper: ใส่แอนิเมชันให้แท็บที่เปิดใหม่
   function activateTabAnim(section){
     section.classList.remove('hidden');
-    section.classList.remove('tab-anim'); // reset
-    // force reflow
-    void section.offsetWidth;
+    section.classList.remove('tab-anim');
+    void section.offsetWidth; // reflow
     section.classList.add('tab-anim');
   }
 
@@ -362,7 +359,7 @@
       $$('.tab').forEach(s=>s.classList.add('hidden'));
       activateTabAnim($('#tab-'+tab));
     })
-  })
+  });
 
   // ---------- Profile ----------
   const profKey = 'medisafe.profile';
@@ -375,8 +372,8 @@
   function loadProfile(){
     const data = store.get(profKey, {});
     ['name','age','dob','blood','rh','conditions','allergies','phone','ice','weight','height']
-      .forEach(k=>{ if(data[k]!==undefined) form.elements[k].value = data[k] })
-    renderProfileCard(data)
+      .forEach(k=>{ if(data[k]!==undefined) form.elements[k].value = data[k] });
+    renderProfileCard(data);
   }
   function ageFromDOB(dob){
     if(!dob) return '';
@@ -402,15 +399,15 @@
     store.set(profKey, data);
     renderProfileCard(data);
     $('#profileStatus').textContent = 'บันทึกแล้ว';
-    setTimeout(()=>$('#profileStatus').textContent='', 2000)
+    setTimeout(()=>$('#profileStatus').textContent='', 2000);
     syncWidgetPreview();
-  })
+  });
   $('#clearProfile').addEventListener('click', ()=>{
     localStorage.removeItem(profKey);
     form.reset();
     renderProfileCard({});
     syncWidgetPreview();
-  })
+  });
 
   // ---------- Widget ----------
   const widgetKey = 'medisafe.widget';
@@ -451,15 +448,15 @@
       showICE: wForm.elements['showICE'].checked,
       style: wForm.elements['style'].value,
       theme: wForm.elements['theme'].value
-    }
+    };
     store.set(widgetKey, data);
     document.documentElement.style.setProperty('--brand', data.theme);
     syncWidgetPreview();
     $('#widgetStatus').textContent = 'บันทึกแล้ว';
-    setTimeout(()=>$('#widgetStatus').textContent='', 2000)
-  })
+    setTimeout(()=>$('#widgetStatus').textContent='', 2000);
+  });
 
-  // Notifications
+  // Local-only test notification (ต้องเปิดหน้าอยู่)
   async function ensurePermission(){
     if(!('Notification' in window)) return false;
     if(Notification.permission === 'granted') return true;
@@ -474,7 +471,7 @@
     if(!ok){ alert('โปรดอนุญาตการแจ้งเตือนในเบราว์เซอร์'); return }
     const body = widgetText();
     new Notification('MediSafe – การ์ดฉุกเฉิน', { body });
-  })
+  });
 
   // ---------- Meds ----------
   const medsKey = 'medisafe.meds';
@@ -484,7 +481,7 @@
     medTbl.innerHTML = '';
     list.forEach((m, idx)=>{
       const tr = document.createElement('tr');
-      tr.className = 'smooth'; // row hover
+      tr.className = 'smooth';
       tr.innerHTML = `<td class="p-3">${m.name}</td>
         <td class="p-3">${m.note||''}</td>
         <td class="p-3">${m.time}</td>
@@ -524,7 +521,7 @@
     }
   })
 
-  // Simple scheduler: checks every 30s while page is open
+  // Simple on-page scheduler (ทำงานเฉพาะตอนหน้าเปิดอยู่)
   let schedTimer=null;
   function startScheduler(){
     if(schedTimer) clearInterval(schedTimer);
@@ -542,15 +539,78 @@
           new Notification('ถึงเวลาทานยา: '+m.name, { body: (m.note? m.note+' • ' : '') + (p.name||'ผู้ใช้ MediSafe') });
           m.lastFired=today;
         }
-      })
+      });
       store.set(medsKey, list);
     }, 30000);
     $('#medStatus').textContent = 'เริ่มเตือนแล้ว (ทำงานขณะเปิดหน้าเว็บ)';
-    setTimeout(()=>$('#medStatus').textContent='', 2500)
+    setTimeout(()=>$('#medStatus').textContent='', 2500);
   }
   $('#startSched').addEventListener('click', startScheduler);
 
-  // ---------- PWA (optional) ----------
+  // ---------- Web Push (Live Notification) ----------
+  const VAPID_PUBLIC_KEY = 'PUT_YOUR_VAPID_PUBLIC_KEY_HERE'; // แทนที่ด้วย Public Key (Base64URL)
+
+  async function urlBase64ToUint8Array(base64String){
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding).replace(/-/g,'+').replace(/_/g,'/');
+    const raw = atob(base64);
+    const arr = new Uint8Array(raw.length);
+    for (let i=0;i<raw.length;i++) arr[i] = raw.charCodeAt(i);
+    return arr;
+  }
+
+  async function ensureSWRegistered(){
+    if(!('serviceWorker' in navigator)) throw new Error('เบราว์เซอร์ไม่รองรับ Service Worker');
+    return navigator.serviceWorker.register('./sw.js');
+  }
+
+  async function subscribePush(){
+    await ensureSWRegistered();
+    const reg = await navigator.serviceWorker.ready;
+    if(Notification.permission !== 'granted'){
+      const perm = await Notification.requestPermission();
+      if(perm !== 'granted') throw new Error('ผู้ใช้ยังไม่อนุญาตการแจ้งเตือน');
+    }
+    const sub = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: await urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+    });
+
+    // ส่ง subscription ไปเก็บที่เซิร์ฟเวอร์
+    await fetch('/api/save-sub', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(sub)
+    });
+
+    localStorage.setItem('medisafe.pushSub', JSON.stringify(sub));
+    return sub;
+  }
+
+  $('#btnPushSetup')?.addEventListener('click', async ()=>{
+    const el = $('#pushStatus');
+    try{
+      const sub = await subscribePush();
+      el.textContent = 'สมัครรับการแจ้งเตือนสำเร็จ ✓ (เซิร์ฟเวอร์จะสามารถยิงไปยัง lock screen ได้)';
+    }catch(err){
+      el.textContent = 'สมัครไม่สำเร็จ: ' + err.message;
+    }
+  });
+
+  $('#btnPushTest')?.addEventListener('click', async ()=>{
+    const el = $('#pushStatus');
+    try{
+      const sub = JSON.parse(localStorage.getItem('medisafe.pushSub')||'null');
+      if(!sub) throw new Error('ยังไม่มี subscription (กด “สมัครรับการแจ้งเตือน” ก่อน)');
+      const res = await fetch('/api/push-test', {method:'POST'});
+      if(!res.ok) throw new Error('Server error');
+      el.textContent = 'ยิงทดสอบแล้ว — ถ้าตั้งค่า VAPID/HTTPS ถูกต้อง จะเด้งในไม่กี่วินาที';
+    }catch(err){
+      el.textContent = 'ทดสอบไม่สำเร็จ: ' + err.message;
+    }
+  });
+
+  // ---------- PWA ----------
   (function setupPWA(){
     try{
       const manifest = {
@@ -558,30 +618,17 @@
         start_url: '.', display:'standalone',
         background_color:'#ffffff',
         theme_color: getComputedStyle(document.documentElement).getPropertyValue('--brand')||'#175f5c',
-        icons:[
-          // ใช้โลโก้จริงในไอคอน PWA
-          { src:'medisafelogo.png', sizes:'192x192', type:'image/png' }
-        ]
+        icons:[ { src:'medisafelogo.png', sizes:'192x192', type:'image/png' } ]
       };
       const blob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
       const url = URL.createObjectURL(blob);
       const link = document.createElement('link'); link.rel='manifest'; link.href=url; document.head.appendChild(link);
 
       if('serviceWorker' in navigator){
-        const swCode = `
-          self.addEventListener('install',e=>self.skipWaiting());
-          self.addEventListener('activate',e=>self.clients.claim());
-          self.addEventListener('fetch',()=>{});
-          self.addEventListener('notificationclick',e=>{
-            e.notification.close();
-            e.waitUntil(self.clients.matchAll({type:'window'}).then(list=>{
-              if(list.length) return list[0].focus();
-              return self.clients.openWindow('./');
-            }))
-          });
-        `;
-        const swUrl = URL.createObjectURL(new Blob([swCode],{type:'text/javascript'}));
-        navigator.serviceWorker.register(swUrl);
+        // ถ้ายังไม่ได้ register sw ให้ทำ (กรณี user ยังไม่กดสมัคร push)
+        navigator.serviceWorker.getRegistration().then(reg=>{
+          if(!reg) navigator.serviceWorker.register('./sw.js');
+        });
       }
 
       // Install prompt
