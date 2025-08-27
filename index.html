@@ -49,7 +49,7 @@
     <div class="max-w-5xl mx-auto px-4 py-3 flex items-center gap-3">
       <img src="medisafelogo.png" alt="MediSafe Logo" class="w-14 h-14 rounded-xl bg-white/10 p-1 smooth" />
       <h1 class="text-lg sm:text-xl font-semibold tracking-tight">MediSafe</h1>
-      <span class="ml-auto text-xs opacity-90">เวอร์ชัน 1.0.1</span>
+      <span class="ml-auto text-xs opacity-90">เวอร์ชัน 1.0.2</span>
     </div>
   </header>
 
@@ -88,11 +88,11 @@
       <form id="profileForm" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label class="block text-sm mb-1">ชื่อ-สกุล</label>
-          <input name="name" required class="w-full p-3 border rounded-xl smooth-fast focus-ring" placeholder="เช่น เจตต์นิภัทธ์ เบ็ญจมิตรกุล" />
+          <input name="name" required class="w-full p-3 border rounded-xl smooth-fast focus-ring" placeholder="กรุณากรอกชื่อ-สกุล" />
         </div>
         <div>
           <label class="block text-sm mb-1">อายุ (ปี)</label>
-          <input name="age" type="number" min="0" class="w-full p-3 border rounded-xl smooth-fast focus-ring" placeholder="เช่น 16" />
+          <input name="age" type="number" min="0" class="w-full p-3 border rounded-xl smooth-fast focus-ring" placeholder="เช่น 17 ปี" />
         </div>
         <div>
           <label class="block text-sm mb-1">วันเกิด</label>
@@ -277,39 +277,61 @@
         <div class="w-8 h-8 rounded-lg brand-bg text-white flex items-center justify-center text-sm font-bold">SOS</div>
         <h2 class="text-xl font-semibold brand">เบอร์ฉุกเฉินที่สำคัญ</h2>
       </div>
+
+      <!-- ใช้เทมเพลตเดียวกับการ์ด 1669 ทุกอัน -->
       <div class="grid sm:grid-cols-2 gap-3">
-        <a class="card border p-4 flex items-center gap-3 hover:bg-gray-50 smooth elev press" href="tel:1669">
+        <!-- สถาบันการแพทย์ฉุกเฉินแห่งชาติ 1669 -->
+        <a class="card border p-4 flex items-center gap-3 hover:bg-gray-50 smooth elev press" href="tel:1669" aria-label="โทร 1669 สถาบันการแพทย์ฉุกเฉินแห่งชาติ">
           <img src="สพฉ.jpg" class="w-12 h-12 rounded-2xl object-cover bg-gray-100" alt="" />
           <div>
             <div class="font-medium">สถาบันการแพทย์ฉุกเฉินแห่งชาติ <span class="text-gray-400 font-semibold">1669</span></div>
             <div class="text-sm text-gray-600">ทั่วประเทศ</div>
           </div>
         </a>
-      
-        <a class="card border p-4 flex items-center gap-3 hover:bg-gray-50 smooth elev press" href="tel:1554">
-         <img src="วชิระ.jpg" class="w-12 h-12 rounded-2xl object-cover bg-gray-100" alt="" />
-          <div class="w-12 h-12 rounded-2xl brand-bg text-white flex items-center justify-center font-bold">1554</div>
-          <div><div class="font-medium">หน่วยแพทย์กู้ชีพ วชิรพยาบาล</div></div>
+
+        <!-- หน่วยแพทย์กู้ชีพ วชิรพยาบาล 1554 -->
+        <a class="card border p-4 flex items-center gap-3 hover:bg-gray-50 smooth elev press" href="tel:1554" aria-label="โทร 1554 หน่วยแพทย์กู้ชีพ วชิรพยาบาล">
+          <img src="วชิระ.jpg" class="w-12 h-12 rounded-2xl object-cover bg-gray-100" alt="" />
+          <div>
+            <div class="font-medium">หน่วยแพทย์กู้ชีพ วชิรพยาบาล <span class="text-gray-400 font-semibold">1554</span></div>
+            <div class="text-sm text-gray-600">กรุงเทพฯ และพื้นที่ให้บริการ</div>
+          </div>
         </a>
-        <a class="card border p-4 flex items-center gap-3 hover:bg-gray-50 smooth elev press" href="tel:1367">
-        <img src="พิษมหิดล.jpg" class="w-12 h-12 rounded-2xl object-cover bg-gray-100" alt="" />
-          <div class="w-12 h-12 rounded-2xl brand-bg text-white flex items-center justify-center font-bold">1367</div>
-          <div><div class="font-medium">ศูนย์พิษวิทยา รพ.รามาธิบดี</div></div>
+
+        <!-- ศูนย์พิษวิทยา รพ.รามาธิบดี 1367 -->
+        <a class="card border p-4 flex items-center gap-3 hover:bg-gray-50 smooth elev press" href="tel:1367" aria-label="โทร 1367 ศูนย์พิษวิทยา รามาธิบดี">
+          <img src="พิษมหิดล.jpg" class="w-12 h-12 rounded-2xl object-cover bg-gray-100" alt="" />
+          <div>
+            <div class="font-medium">ศูนย์พิษวิทยา รพ.รามาธิบดี <span class="text-gray-400 font-semibold">1367</span></div>
+            <div class="text-sm text-gray-600">ให้คำปรึกษาพิษวิทยา</div>
+          </div>
         </a>
-        <a class="card border p-4 flex items-center gap-3 hover:bg-gray-50 smooth elev press" href="tel:1667">
-         <img src="จิต.jpg" class="w-12 h-12 rounded-2xl object-cover bg-gray-100" alt="" />
-          <div class="w-12 h-12 rounded-2xl brand-bg text-white flex items-center justify-center font-bold">1667</div>
-          <div><div class="font-medium">สายด่วนกรมสุขภาพจิต</div></div>
+
+        <!-- สายด่วนกรมสุขภาพจิต 1667 -->
+        <a class="card border p-4 flex items-center gap-3 hover:bg-gray-50 smooth elev press" href="tel:1667" aria-label="โทร 1667 กรมสุขภาพจิต">
+          <img src="จิต.jpg" class="w-12 h-12 rounded-2xl object-cover bg-gray-100" alt="" />
+          <div>
+            <div class="font-medium">สายด่วนกรมสุขภาพจิต <span class="text-gray-400 font-semibold">1667</span></div>
+            <div class="text-sm text-gray-600">ให้คำปรึกษาสุขภาพจิต</div>
+          </div>
         </a>
-        <a class="card border p-4 flex items-center gap-3 hover:bg-gray-50 smooth elev press" href="tel:1784">
-        <img src="สพฉ.jpg" class="w-12 h-12 rounded-2xl object-cover bg-gray-100" alt="" />
-          <div class="w-12 h-12 rounded-2xl brand-bg text-white flex items-center justify-center font-bold">1784</div>
-          <div><div class="font-medium">กรมป้องกันและบรรเทาสาธารณภัย</div></div>
+
+        <!-- กรมป้องกันและบรรเทาสาธารณภัย 1784 -->
+        <a class="card border p-4 flex items-center gap-3 hover:bg-gray-50 smooth elev press" href="tel:1784" aria-label="โทร 1784 กรมป้องกันและบรรเทาสาธารณภัย">
+          <img src="สพฉ.jpg" class="w-12 h-12 rounded-2xl object-cover bg-gray-100" alt="" />
+          <div>
+            <div class="font-medium">กรมป้องกันและบรรเทาสาธารณภัย <span class="text-gray-400 font-semibold">1784</span></div>
+            <div class="text-sm text-gray-600">เหตุด่วนเหตุภัยพิบัติ</div>
+          </div>
         </a>
-        <a class="card border p-4 flex items-center gap-3 hover:bg-gray-50 smooth elev press" href="tel:1418">
-        <img src="ปอ.jpg" class="w-12 h-12 rounded-2xl object-cover bg-gray-100" alt="" />
-          <div class="w-12 h-12 rounded-2xl brand-bg text-white flex items-center justify-center font-bold">1418</div>
-          <div><div class="font-medium">มูลนิธิปอเต๊กตึ๊ง</div></div>
+
+        <!-- มูลนิธิปอเต๊กตึ๊ง 1418 -->
+        <a class="card border p-4 flex items-center gap-3 hover:bg-gray-50 smooth elev press" href="tel:1418" aria-label="โทร 1418 มูลนิธิปอเต๊กตึ๊ง">
+          <img src="ปอ.jpg" class="w-12 h-12 rounded-2xl object-cover bg-gray-100" alt="" />
+          <div>
+            <div class="font-medium">มูลนิธิปอเต๊กตึ๊ง <span class="text-gray-400 font-semibold">1418</span></div>
+            <div class="text-sm text-gray-600">กู้ชีพ-กู้ภัย</div>
+          </div>
         </a>
       </div>
 
@@ -319,7 +341,8 @@
     </section>
 
     <!-- PWA Install / status -->
-    <div class="fixed left-4 bottom-4 card p-3 bg-white border w-[300px] smooth elev" id="pwaBox" hidden>
+    <!-- แก้ให้โชว์เสมอ: เอา hidden ออก -->
+    <div class="fixed left-4 bottom-4 card p-3 bg-white border w-[300px] smooth elev" id="pwaBox">
       <div class="font-medium mb-1">ติดตั้งเป็นแอป (PWA)</div>
       <p class="text-sm text-gray-700">ติดตั้งบนมือถือเพื่อเปิดได้รวดเร็วและใช้งานได้สะดวกมากยิ่งขึ้น</p>
       <div class="mt-2 flex gap-2">
@@ -619,7 +642,7 @@
         name: 'MediSafe', short_name:'MediSafe',
         start_url: '.', display:'standalone',
         background_color:'#ffffff',
-        theme_color: getComputedStyle(document.documentElement).getPropertyValue('--brand')||'#175f5c',
+        theme_color:'#175f5c',
         icons:[ { src:'medisafelogo.png', sizes:'192x192', type:'image/png' } ]
       };
       const blob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
@@ -627,19 +650,27 @@
       const link = document.createElement('link'); link.rel='manifest'; link.href=url; document.head.appendChild(link);
 
       if('serviceWorker' in navigator){
-        // ถ้ายังไม่ได้ register sw ให้ทำ (กรณี user ยังไม่กดสมัคร push)
         navigator.serviceWorker.getRegistration().then(reg=>{
           if(!reg) navigator.serviceWorker.register('./sw.js');
         });
       }
 
-      // Install prompt
+      // โชว์กล่อง PWA เสมอ และถ้าได้ beforeinstallprompt ก็เรียก prompt ได้
       let deferredPrompt=null;
+      // ให้กล่องแสดงตั้งแต่แรก (แทนที่การซ่อนไว้ก่อน)
+      $('#pwaBox').hidden = false;
+
       window.addEventListener('beforeinstallprompt', (e)=>{
-        e.preventDefault(); deferredPrompt=e; $('#pwaBox').hidden=false;
+        e.preventDefault();
+        deferredPrompt = e;
+        $('#pwaBox').hidden = false; // ย้ำให้โชว์
       });
       $('#btnInstall').addEventListener('click', async()=>{
-        if(!deferredPrompt) return;
+        if(!deferredPrompt){
+          // กรณีเบราว์เซอร์ไม่รองรับ prompt (เช่น iOS Safari): แสดงคำแนะนำสั้นๆ
+          alert('หากปุ่มติดตั้งไม่ทำงาน:\n• iOS: แตะ Share → Add to Home Screen\n• Android/Chrome: เปิดเมนู ⋮ → Install app');
+          return;
+        }
         deferredPrompt.prompt();
         const res = await deferredPrompt.userChoice;
         if(res.outcome==='accepted'){ $('#pwaBox').hidden=true }
