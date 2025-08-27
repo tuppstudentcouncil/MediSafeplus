@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MediSafe – เว็บข้อมูลฉุกเฉิน</title>
+  <meta name="description" content="MediSafe: เว็บสำหรับกรอก/แสดงข้อมูลทางการแพทย์ส่วนบุคคล การแจ้งเตือนยา และเบอร์ฉุกเฉิน" />
+
+  <!-- Favicon / App Icons (เพิ่มโลโก้บน URL/แท็บเบราว์เซอร์) -->
+  <link rel="icon" href="medisafelogo.png" type="image/png" />
+  <link rel="apple-touch-icon" href="medisafelogo.png" />
+  <meta property="og:image" content="medisafelogo.png" />
+
+  <!-- Tailwind (CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root{--brand:#175f5c}
+    .brand{color:var(--brand)}
+    .brand-bg{background:var(--brand)}
+    .glass{backdrop-filter: blur(10px); background:rgba(255,255,255,.7)}
+    .card{border-radius:1rem; box-shadow:0 10px 25px rgba(0,0,0,.08)}
+    .tab-btn[aria-selected="true"]{background:var(--brand); color:#fff}
+    .pill{border-radius:999px}
+
+    /* ---- เพิ่มความสมูท ---- */
+    *{scroll-behavior:smooth}
+    .smooth{transition: all .25s ease}
+    .smooth-fast{transition: all .18s ease}
+    .elev:hover{box-shadow:0 16px 35px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.05)}
+    .press:active{transform: translateY(1px); filter:brightness(.98)}
+    .focus-ring:focus-visible{outline:3px solid color-mix(in oklab, var(--brand) 70%, white 30%); outline-offset:3px; border-radius:12px}
+
+    /* แอนิเมชันตอนสลับแท็บ */
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(6px) scale(.995); }
+      to   { opacity: 1; transform: translateY(0)   scale(1); }
+    }
+    .tab-anim{ animation: fadeSlideIn .28s ease; }
+
+    /* เคารพ reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      .smooth,.smooth-fast{transition:none}
+      .tab-anim{animation:none}
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gray-50 text-gray-800">
+  <!-- App Shell -->
+  <header class="sticky top-0 z-20 brand-bg text-white/95 shadow-sm">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center gap-3">
+      <!-- โลโก้ในหน้า -->
+      <img src="medisafelogo.png" alt="MediSafe Logo" class="w-8 h-8 rounded-xl bg-white/10 p-1 smooth" />
+      <h1 class="text-lg sm:text-xl font-semibold tracking-tight">MediSafe — ข้อมูลฉุกเฉิน</h1>
+      <span class="ml-auto text-xs opacity-90">เวอร์ชัน 1.0</span>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 py-6">
+    <!-- Tabs -->
+    <nav class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-5">
+      <button class="tab-btn card px-3 py-2 text-sm font-medium smooth elev press focus-ring" data-tab="profile" aria-selected="true">ข้อมูลส่วนบุคคล</button>
+      <button class="tab-btn card px-3 py-2 text-sm font-medium smooth elev press focus-ring" data-tab="widget">วิดเจ็ต/การแจ้งเตือน</button>
+      <button class="tab-btn card px-3 py-2 text-sm font-medium smooth elev press focus-ring" data-tab="meds">แจ้งเตือนยา</button>
+      <button class="tab-btn card px-3 py-2 text-sm font-medium smooth elev press focus-ring" data-tab="emergency">เบอร์ฉุกเฉิน</button>
+    </nav>
+
+    <!-- PROFILE TAB -->
+    <section id="tab-profile" class="tab card glass p-4 sm:p-6 tab-anim">
+      <div class="flex items-center gap-2 mb-3">
+        <div class="w-8 h-8 rounded-lg brand-bg text-white flex items-center justify-center text-sm font-bold">MS</div>
+        <h2 class="text-xl font-semibold brand">ข้อมูลส่วนบุคคล</h2>
+      </div>
+      <p class="text-sm text-gray-600 mb-4">กรอกครั้งเดียว ระบบจะบันทึกไว้ในเครื่องของคุณ (LocalStorage) เพื่อใช้แสดงบนวิดเจ็ตและการแจ้งเตือน</p>
+
+      <form id="profileForm" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm mb-1">ชื่อ-สกุล</label>
+          <input name="name" required class="w-full p-3 border rounded-xl smooth-fast focus-ring" placeholder="เช่น เจตต์นิภัทธ์ เบ็ญจมิตรกุล" />
+        </div>
+        <div>
+          <label class="block text-sm mb-1">อายุ (ปี)</label>
+          <input name="age" type="number" min="0" class="w-full p-3 border rounded-xl smooth-fast focus-ring" placeholder="เช่น 16" />
+        </div>
+        <div>
+          <label class="block text-sm mb-1">วันเกิด</label>
+          <input name="dob" type="date" class="w-full p-3 border rounded-xl smooth-fast focus-ring" />
+        </div>
+        <div>
+          <label class="block text-sm mb-1">กรุ๊ปเลือด</label>
+          <select name="blood" class="w-full p-3 border rounded-xl smooth-fast focus-ring">
+            <option value="">— เลือก —</option>
+            <option>O</option><option>A</option><option>B</option><option>AB</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm mb-1">Rh</label>
+          <select name="rh" class="w-full p-3 border rounded-xl smooth-fast focus-ring">
+            <option value="">— เลือก —</option>
+            <option>+</option><option>-</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm mb-1">โรคประจำตัว</label>
+          <input name="conditions" class="w-full p-3 border rounded-xl smooth-fast focus-ring" placeholder="เช่น หอบหืด, เบาหวาน"/>
+        </div>
+        <div class="sm:col-span-2">
+          <label class="block text-sm mb-1">การแพ้ยา</label>
+          <input name="allergies" class="w-full p-3 border rounded-xl smooth-fast focus-ring" placeholder="เช่น เพนิซิลลิน"/>
+        </div>
+        <div>
+          <label class="block text-sm mb-1">เบอร์ติดต่อ</label>
+          <input name="phone" class="w-full p-3 border rounded-xl smooth-fast focus-ring" placeholder="เช่น 080-000-0000"/>
+        </div>
+        <div>
+          <label class="block text-sm mb-1">เบอร์ติดต่อฉุกเฉิน</label>
+          <input name="ice" class="w-full p-3 border rounded-xl smooth-fast focus-ring" placeholder="เช่น 1669 หรือ เบอร์ญาติ"/>
+        </div>
+        <div>
+          <label class="block text-sm mb-1">น้ำหนัก (กก.)</label>
+          <input name="weight" type="number" min="0" step="0.1" class="w-full p-3 border rounded-xl smooth-fast focus-ring"/>
+        </div>
+        <div>
+          <label class="block text-sm mb-1">ส่วนสูง (ซม.)</label>
+          <input name="height" type="number" min="0" step="0.1" class="w-full p-3 border rounded-xl smooth-fast focus-ring"/>
+        </div>
+        <div class="sm:col-span-2 flex items-center gap-2 mt-2">
+          <button class="saveProfile brand-bg text-white px-4 py-2 rounded-xl font-medium smooth elev press focus-ring">บันทึกข้อมูล</button>
+          <button type="button" id="clearProfile" class="px-4 py-2 rounded-xl border smooth press focus-ring">ล้างข้อมูล</button>
+          <span id="profileStatus" class="text-sm text-gray-600"></span>
+        </div>
+      </form>
+
+      <div class="mt-6">
+        <h3 class="font-semibold mb-2">พรีวิวการ์ดฉุกเฉิน</h3>
+        <div id="profileCard" class="card p-4 border smooth elev">
+          <div class="flex items-center gap-3">
+            <img src="medisafelogo.png" alt="MediSafe" class="w-12 h-12 rounded-2xl object-cover bg-gray-100" />
+            <div>
+              <div class="font-semibold" id="pv-name">—</div>
+              <div class="text-sm text-gray-600" id="pv-meta">—</div>
+            </div>
+          </div>
+          <div class="mt-3 grid sm:grid-cols-2 gap-2 text-sm">
+            <div><span class="font-medium">แพ้ยา:</span> <span id="pv-allergy">—</span></div>
+            <div><span class="font-medium">โรคประจำตัว:</span> <span id="pv-cond">—</span></div>
+            <div><span class="font-medium">ติดต่อ:</span> <span id="pv-phone">—</span></div>
+            <div><span class="font-medium">ฉุกเฉิน:</span> <span id="pv-ice">—</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WIDGET TAB -->
+    <section id="tab-widget" class="tab card glass p-4 sm:p-6 hidden">
+      <div class="flex items-center gap-2 mb-3">
+        <div class="w-8 h-8 rounded-lg brand-bg text-white flex items-center justify-center text-sm font-bold">W</div>
+        <h2 class="text-xl font-semibold brand">วิดเจ็ต & การแจ้งเตือน</h2>
+      </div>
+      <p class="text-sm text-gray-600 mb-4">กำหนดสิ่งที่จะโชว์ในวิดเจ็ต และทดสอบส่งการแจ้งเตือน (ต้องอนุญาต Notification)</p>
+
+      <form id="widgetForm" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="sm:col-span-2">
+          <label class="block text-sm mb-2">เลือกข้อมูลที่จะแสดงบนวิดเจ็ต</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <label class="flex items-center gap-2 smooth">
+              <input type="checkbox" name="showBlood" class="w-4 h-4" />
+              <span>กรุ๊ปเลือด & Rh</span>
+            </label>
+            <label class="flex items-center gap-2 smooth">
+              <input type="checkbox" name="showAllergy" class="w-4 h-4" />
+              <span>การแพ้ยา</span>
+            </label>
+            <label class="flex items-center gap-2 smooth">
+              <input type="checkbox" name="showCond" class="w-4 h-4" />
+              <span>โรคประจำตัว</span>
+            </label>
+            <label class="flex items-center gap-2 smooth">
+              <input type="checkbox" name="showICE" class="w-4 h-4" />
+              <span>เบอร์ฉุกเฉิน</span>
+            </label>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm mb-1">สไตล์วิดเจ็ต</label>
+          <select name="style" class="w-full p-3 border rounded-xl smooth-fast focus-ring">
+            <option value="compact">Compact</option>
+            <option value="regular">Regular</option>
+            <option value="large">Large</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm mb-1">ธีมสี</label>
+          <input type="color" name="theme" class="w-full p-2 h-11 border rounded-xl smooth-fast focus-ring" value="#175f5c" />
+        </div>
+        <div class="sm:col-span-2 flex items-center gap-2 mt-2">
+          <button class="brand-bg text-white px-4 py-2 rounded-xl font-medium smooth elev press focus-ring">บันทึกวิดเจ็ต</button>
+          <button type="button" id="testNotif" class="px-4 py-2 rounded-xl border smooth press focus-ring">ส่งแจ้งเตือนทดสอบ</button>
+          <span id="widgetStatus" class="text-sm text-gray-600"></span>
+        </div>
+      </form>
+
+      <div class="mt-6">
+        <h3 class="font-semibold mb-2">พรีวิววิดเจ็ต</h3>
+        <div id="widgetPreview" class="card p-4 border flex items-start gap-3 smooth elev">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold" id="w-avatar">MS</div>
+          <div class="text-sm" id="w-text">—</div>
+        </div>
+      </div>
+
+      <details class="mt-6">
+        <summary class="cursor-pointer font-medium">ช่วยเหลือ: ทำไมแจ้งเตือนไม่เด้ง?</summary>
+        <ul class="list-disc ml-6 mt-2 text-sm text-gray-700">
+          <li>เปิดสิทธิ์ Notification ในเบราว์เซอร์ก่อน</li>
+          <li>การแจ้งเตือนแบบกำหนดเวลา จะทำงานขณะที่หน้านี้เปิดอยู่เท่านั้น (ข้อจำกัดของเว็บ)</li>
+          <li>ถ้าต้องการใช้งานออฟไลน์/หน้าจอหลัก ให้ติดตั้งเป็น PWA (ดูมุมล่างซ้าย)</li>
+        </ul>
+      </details>
+    </section>
+
+    <!-- MEDICATIONS TAB -->
+    <section id="tab-meds" class="tab card glass p-4 sm:p-6 hidden">
+      <div class="flex items-center gap-2 mb-3">
+        <div class="w-8 h-8 rounded-lg brand-bg text-white flex items-center justify-center text-sm font-bold">Rx</div>
+        <h2 class="text-xl font-semibold brand">การแจ้งเตือนการทานยา</h2>
+      </div>
+      <form id="medForm" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-sm mb-1">ชนิดยา (เลือก)</label>
+          <select id="medType" class="w-full p-3 border rounded-xl smooth-fast focus-ring">
+            <option value="">— เลือก —</option>
+            <option>พาราเซตามอล</option>
+            <option>ไอบูโพรเฟน</option>
+            <option>อะม็อกซิซิลลิน</option>
+            <option>ยาลดกรด</option>
+            <option>วิตามินรวม</option>
+            <option value="__custom">— อื่น ๆ (กรอกเอง) —</option>
+          </select>
+          <input id="medCustom" class="w-full p-3 border rounded-xl mt-2 hidden smooth-fast focus-ring" placeholder="ชื่อยา (กรอกเอง)" />
+        </div>
+        <div>
+          <label class="block text-sm mb-1">ขนาด/หมายเหตุ</label>
+          <input id="medNote" class="w-full p-3 border rounded-xl smooth-fast focus-ring" placeholder="เช่น 1 เม็ด หลังอาหาร"/>
+        </div>
+        <div>
+          <label class="block text-sm mb-1">เวลาที่ต้องทาน</label>
+          <input id="medTime" type="time" class="w-full p-3 border rounded-xl smooth-fast focus-ring" />
+        </div>
+        <div class="sm:col-span-3 flex items-center gap-2">
+          <button class="brand-bg text-white px-4 py-2 rounded-xl font-medium smooth elev press focus-ring">เพิ่มรายการ</button>
+          <button type="button" id="startSched" class="px-4 py-2 rounded-xl border smooth press focus-ring">เริ่มเตือนอัตโนมัติ</button>
+          <span id="medStatus" class="text-sm text-gray-600"></span>
+        </div>
+      </form>
+
+      <div class="mt-6">
+        <h3 class="font-semibold mb-2">รายการยา</h3>
+        <div class="overflow-hidden border rounded-2xl">
+          <table class="w-full text-sm">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="text-left p-3">ยา</th>
+                <th class="text-left p-3">ขนาด/หมายเหตุ</th>
+                <th class="text-left p-3">เวลา</th>
+                <th class="p-3">การทำงาน</th>
+              </tr>
+            </thead>
+            <tbody id="medList"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- EMERGENCY TAB -->
+    <section id="tab-emergency" class="tab card glass p-4 sm:p-6 hidden">
+      <div class="flex items-center gap-2 mb-3">
+        <div class="w-8 h-8 rounded-lg brand-bg text-white flex items-center justify-center text-sm font-bold">SOS</div>
+        <h2 class="text-xl font-semibold brand">เบอร์ฉุกเฉินสำคัญ</h2>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-3">
+        <!-- เพิ่มเอฟเฟกต์ hover -->
+        <a class="card border p-4 flex items-center gap-3 hover:bg-gray-50 smooth elev press" href="tel:1669">
+          <img src="medisafelogo.png" class="w-12 h-12 rounded-2xl object-cover bg-gray-100" alt="" />
+          <div>
+            <div class="font-medium">สถาบันการแพทย์ฉุกเฉินแห่งชาติ <span class="text-gray-400 font-semibold">1669</span></div>
+            <div class="text-sm text-gray-600">ทั่วประเทศ</div>
+          </div>
+        </a>
+        <a class="card border p-4 flex items-center gap-3 hover:bg-gray-50 smooth elev press" href="tel:1646">
+          <div class="w-12 h-12 rounded-2xl brand-bg text-white flex items-center justify-center font-bold">1646</div>
+          <div><div class="font-medium">หน่วยแพทย์ฉุกเฉิน (กทม.)</div></div>
+        </a>
+        <a class="card border p-4 flex items-center gap-3 hover:bg-gray-50 smooth elev press" href="tel:1554">
+          <div class="w-12 h-12 rounded-2xl brand-bg text-white flex items-center justify-center font-bold">1554</div>
+          <div><div class="font-medium">หน่วยแพทย์กู้ชีพ วชิรพยาบาล</div></div>
+        </a>
+        <a class="card border p-4 flex items-center gap-3 hover:bg-gray-50 smooth elev press" href="tel:1367">
+          <div class="w-12 h-12 rounded-2xl brand-bg text-white flex items-center justify-center font-bold">1367</div>
+          <div><div class="font-medium">ศูนย์พิษวิทยา รพ.รามาธิบดี</div></div>
+        </a>
+        <a class="card border p-4 flex items-center gap-3 hover:bg-gray-50 smooth elev press" href="tel:1667">
+          <div class="w-12 h-12 rounded-2xl brand-bg text-white flex items-center justify-center font-bold">1667</div>
+          <div><div class="font-medium">สายด่วนกรมสุขภาพจิต</div></div>
+        </a>
+        <a class="card border p-4 flex items-center gap-3 hover:bg-gray-50 smooth elev press" href="tel:1784">
+          <div class="w-12 h-12 rounded-2xl brand-bg text-white flex items-center justify-center font-bold">1784</div>
+          <div><div class="font-medium">กรมป้องกันและบรรเทาสาธารณภัย</div></div>
+        </a>
+        <a class="card border p-4 flex items-center gap-3 hover:bg-gray-50 smooth elev press" href="tel:1418">
+          <div class="w-12 h-12 rounded-2xl brand-bg text-white flex items-center justify-center font-bold">1418</div>
+          <div><div class="font-medium">มูลนิธิปอเต๊กตึ๊ง</div></div>
+        </a>
+      </div>
+
+      <div class="mt-6 text-sm text-gray-600">
+        <p>แนะนำให้เพิ่มรายชื่อผู้ติดต่อฉุกเฉิน (ICE) ในโทรศัพท์ด้วย และบันทึกไว้ในหน้า “ข้อมูลส่วนบุคคล” เพื่อให้แสดงในวิดเจ็ต</p>
+      </div>
+    </section>
+
+    <!-- PWA Install / status -->
+    <div class="fixed left-4 bottom-4 card p-3 bg-white border w-[300px] smooth elev" id="pwaBox" hidden>
+      <div class="font-medium mb-1">ติดตั้งเป็นแอป (PWA)</div>
+      <p class="text-sm text-gray-700">ติดตั้งบนมือถือเพื่อเปิดได้รวดเร็วและใช้งานออฟไลน์บางส่วน</p>
+      <div class="mt-2 flex gap-2">
+        <button id="btnInstall" class="brand-bg text-white px-3 py-1.5 rounded-xl text-sm smooth press">ติดตั้ง</button>
+        <button id="btnHidePwa" class="px-3 py-1.5 rounded-xl border text-sm smooth press">ภายหลัง</button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="max-w-5xl mx-auto px-4 pb-10 pt-2 text-xs text-gray-500">
+    <div class="flex items-center gap-2">
+      <img src="medisafelogo.png" alt="" class="w-4 h-4 rounded-sm opacity-80" />
+      <span>© 2025 MediSafe — ใช้เพื่อการช่วยเหลือฉุกเฉินเท่านั้น ไม่ใช่เครื่องมือแพทย์</span>
+    </div>
+  </footer>
+
+  <script>
+  // ---------- Utilities ----------
+  const $ = (sel, el=document) => el.querySelector(sel);
+  const $$ = (sel, el=document) => [...el.querySelectorAll(sel)];
+  const store = {
+    get(key, def){ try{ return JSON.parse(localStorage.getItem(key)) ?? def } catch{ return def } },
+    set(key, val){ localStorage.setItem(key, JSON.stringify(val)) }
+  }
+
+  // Helper: ใส่แอนิเมชันให้แท็บที่เปิดใหม่
+  function activateTabAnim(section){
+    section.classList.remove('hidden');
+    section.classList.remove('tab-anim'); // reset
+    // force reflow
+    void section.offsetWidth;
+    section.classList.add('tab-anim');
+  }
+
+  // ---------- Tabs ----------
+  $$('.tab-btn').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      $$('.tab-btn').forEach(x=>x.setAttribute('aria-selected','false'));
+      b.setAttribute('aria-selected','true');
+      const tab = b.dataset.tab;
+      $$('.tab').forEach(s=>s.classList.add('hidden'));
+      activateTabAnim($('#tab-'+tab));
+    })
+  })
+
+  // ---------- Profile ----------
+  const profKey = 'medisafe.profile';
+  const form = $('#profileForm');
+  const pv = {
+    name: $('#pv-name'), meta: $('#pv-meta'),
+    allergy: $('#pv-allergy'), cond: $('#pv-cond'),
+    phone: $('#pv-phone'), ice: $('#pv-ice')
+  };
+  function loadProfile(){
+    const data = store.get(profKey, {});
+    ['name','age','dob','blood','rh','conditions','allergies','phone','ice','weight','height']
+      .forEach(k=>{ if(data[k]!==undefined) form.elements[k].value = data[k] })
+    renderProfileCard(data)
+  }
+  function ageFromDOB(dob){
+    if(!dob) return '';
+    const d = new Date(dob), t = new Date();
+    let age = t.getFullYear()-d.getFullYear();
+    const m = t.getMonth()-d.getMonth();
+    if(m<0 || (m===0 && t.getDate()<d.getDate())) age--;
+    return age;
+  }
+  function renderProfileCard(data){
+    const age = data.age || ageFromDOB(data.dob) || '—';
+    pv.name.textContent = data.name || '—';
+    pv.meta.textContent = `อายุ ${age} • เลือด ${data.blood||'-'}${data.rh||''}`;
+    pv.allergy.textContent = data.allergies||'—';
+    pv.cond.textContent = data.conditions||'—';
+    pv.phone.textContent = data.phone||'—';
+    pv.ice.textContent = data.ice||'—';
+  }
+  form.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form).entries());
+    if(!data.age && data.dob){ data.age = ageFromDOB(data.dob) }
+    store.set(profKey, data);
+    renderProfileCard(data);
+    $('#profileStatus').textContent = 'บันทึกแล้ว';
+    setTimeout(()=>$('#profileStatus').textContent='', 2000)
+    syncWidgetPreview();
+  })
+  $('#clearProfile').addEventListener('click', ()=>{
+    localStorage.removeItem(profKey);
+    form.reset();
+    renderProfileCard({});
+    syncWidgetPreview();
+  })
+
+  // ---------- Widget ----------
+  const widgetKey = 'medisafe.widget';
+  const wForm = $('#widgetForm');
+  function loadWidget(){
+    const w = store.get(widgetKey, {showBlood:true, showAllergy:true, showCond:true, showICE:true, style:'regular', theme:'#175f5c'});
+    wForm.elements['showBlood'].checked = !!w.showBlood;
+    wForm.elements['showAllergy'].checked = !!w.showAllergy;
+    wForm.elements['showCond'].checked = !!w.showCond;
+    wForm.elements['showICE'].checked = !!w.showICE;
+    wForm.elements['style'].value = w.style || 'regular';
+    wForm.elements['theme'].value = w.theme || '#175f5c';
+    document.documentElement.style.setProperty('--brand', w.theme||'#175f5c');
+    syncWidgetPreview();
+  }
+  function widgetText(){
+    const p = store.get(profKey, {});
+    const w = store.get(widgetKey, {});
+    const items = [];
+    if(w.showBlood) items.push(`เลือด ${p.blood||'-'}${p.rh||''}`);
+    if(w.showAllergy) items.push(`แพ้ยา: ${p.allergies||'-'}`);
+    if(w.showCond) items.push(`โรค: ${p.conditions||'-'}`);
+    if(w.showICE) items.push(`ฉุกเฉิน: ${p.ice||'-'}`);
+    return [`${p.name||'—'}`, items.join(' • ')].filter(Boolean).join('\n');
+  }
+  function syncWidgetPreview(){
+    const w = store.get(widgetKey, {});
+    const txt = widgetText();
+    $('#w-avatar').style.background = w.theme||'#175f5c';
+    $('#w-text').textContent = txt;
+  }
+  wForm.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const data = {
+      showBlood: wForm.elements['showBlood'].checked,
+      showAllergy: wForm.elements['showAllergy'].checked,
+      showCond: wForm.elements['showCond'].checked,
+      showICE: wForm.elements['showICE'].checked,
+      style: wForm.elements['style'].value,
+      theme: wForm.elements['theme'].value
+    }
+    store.set(widgetKey, data);
+    document.documentElement.style.setProperty('--brand', data.theme);
+    syncWidgetPreview();
+    $('#widgetStatus').textContent = 'บันทึกแล้ว';
+    setTimeout(()=>$('#widgetStatus').textContent='', 2000)
+  })
+
+  // Notifications
+  async function ensurePermission(){
+    if(!('Notification' in window)) return false;
+    if(Notification.permission === 'granted') return true;
+    if(Notification.permission !== 'denied'){
+      const res = await Notification.requestPermission();
+      return res === 'granted';
+    }
+    return false;
+  }
+  $('#testNotif').addEventListener('click', async()=>{
+    const ok = await ensurePermission();
+    if(!ok){ alert('โปรดอนุญาตการแจ้งเตือนในเบราว์เซอร์'); return }
+    const body = widgetText();
+    new Notification('MediSafe – การ์ดฉุกเฉิน', { body });
+  })
+
+  // ---------- Meds ----------
+  const medsKey = 'medisafe.meds';
+  const medTbl = $('#medList');
+  function loadMeds(){ renderMeds(store.get(medsKey, [])); }
+  function renderMeds(list){
+    medTbl.innerHTML = '';
+    list.forEach((m, idx)=>{
+      const tr = document.createElement('tr');
+      tr.className = 'smooth'; // row hover
+      tr.innerHTML = `<td class="p-3">${m.name}</td>
+        <td class="p-3">${m.note||''}</td>
+        <td class="p-3">${m.time}</td>
+        <td class="p-3 text-center">
+          <button class="px-3 py-1 rounded-xl border text-xs smooth press focus-ring" data-del="${idx}">ลบ</button>
+        </td>`;
+      medTbl.appendChild(tr);
+    })
+  }
+  $('#medType').addEventListener('change', (e)=>{
+    $('#medCustom').classList.toggle('hidden', e.target.value !== '__custom');
+  })
+  $('#medForm').addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const type = $('#medType').value;
+    const name = type === '__custom' ? ($('#medCustom').value||'ไม่ระบุ') : type;
+    const note = $('#medNote').value;
+    const time = $('#medTime').value;
+    if(!name || !time){
+      $('#medStatus').textContent = 'โปรดกรอกชื่อยาและเวลา';
+      setTimeout(()=>$('#medStatus').textContent='', 2000);
+      return
+    }
+    const list = store.get(medsKey, []);
+    list.push({name, note, time, lastFired:''});
+    store.set(medsKey, list);
+    renderMeds(list);
+    e.target.reset(); $('#medCustom').classList.add('hidden');
+    $('#medStatus').textContent = 'เพิ่มแล้ว'; setTimeout(()=>$('#medStatus').textContent='', 1500)
+  })
+  medTbl.addEventListener('click', (e)=>{
+    const del = e.target.getAttribute('data-del');
+    if(del!==null){
+      const list = store.get(medsKey, []);
+      list.splice(Number(del),1);
+      store.set(medsKey, list); renderMeds(list);
+    }
+  })
+
+  // Simple scheduler: checks every 30s while page is open
+  let schedTimer=null;
+  function startScheduler(){
+    if(schedTimer) clearInterval(schedTimer);
+    schedTimer = setInterval(async()=>{
+      const ok = await ensurePermission(); if(!ok) return;
+      const list = store.get(medsKey, []);
+      const now = new Date();
+      const hh = String(now.getHours()).padStart(2,'0');
+      const mm = String(now.getMinutes()).padStart(2,'0');
+      const cur = `${hh}:${mm}`;
+      const today = now.toISOString().slice(0,10);
+      list.forEach(m=>{
+        if(m.time===cur && m.lastFired!==today){
+          const p = store.get(profKey, {});
+          new Notification('ถึงเวลาทานยา: '+m.name, { body: (m.note? m.note+' • ' : '') + (p.name||'ผู้ใช้ MediSafe') });
+          m.lastFired=today;
+        }
+      })
+      store.set(medsKey, list);
+    }, 30000);
+    $('#medStatus').textContent = 'เริ่มเตือนแล้ว (ทำงานขณะเปิดหน้าเว็บ)';
+    setTimeout(()=>$('#medStatus').textContent='', 2500)
+  }
+  $('#startSched').addEventListener('click', startScheduler);
+
+  // ---------- PWA (optional) ----------
+  (function setupPWA(){
+    try{
+      const manifest = {
+        name: 'MediSafe', short_name:'MediSafe',
+        start_url: '.', display:'standalone',
+        background_color:'#ffffff',
+        theme_color: getComputedStyle(document.documentElement).getPropertyValue('--brand')||'#175f5c',
+        icons:[
+          // ใช้โลโก้จริงในไอคอน PWA
+          { src:'medisafelogo.png', sizes:'192x192', type:'image/png' }
+        ]
+      };
+      const blob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('link'); link.rel='manifest'; link.href=url; document.head.appendChild(link);
+
+      if('serviceWorker' in navigator){
+        const swCode = `
+          self.addEventListener('install',e=>self.skipWaiting());
+          self.addEventListener('activate',e=>self.clients.claim());
+          self.addEventListener('fetch',()=>{});
+          self.addEventListener('notificationclick',e=>{
+            e.notification.close();
+            e.waitUntil(self.clients.matchAll({type:'window'}).then(list=>{
+              if(list.length) return list[0].focus();
+              return self.clients.openWindow('./');
+            }))
+          });
+        `;
+        const swUrl = URL.createObjectURL(new Blob([swCode],{type:'text/javascript'}));
+        navigator.serviceWorker.register(swUrl);
+      }
+
+      // Install prompt
+      let deferredPrompt=null;
+      window.addEventListener('beforeinstallprompt', (e)=>{
+        e.preventDefault(); deferredPrompt=e; $('#pwaBox').hidden=false;
+      });
+      $('#btnInstall').addEventListener('click', async()=>{
+        if(!deferredPrompt) return;
+        deferredPrompt.prompt();
+        const res = await deferredPrompt.userChoice;
+        if(res.outcome==='accepted'){ $('#pwaBox').hidden=true }
+      });
+      $('#btnHidePwa').addEventListener('click', ()=>$('#pwaBox').hidden=true);
+    }catch(err){ console.warn('PWA init skipped', err) }
+  })();
+
+  // ---------- Init ----------
+  loadProfile();
+  loadWidget();
+  loadMeds();
+  </script>
+</body>
+</html>
