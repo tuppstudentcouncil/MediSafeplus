@@ -47,9 +47,9 @@
   <!-- App Shell -->
   <header class="sticky top-0 z-20 brand-bg text-white/95 shadow-sm">
     <div class="max-w-5xl mx-auto px-4 py-3 flex items-center gap-3">
-      <img src="medisafelogo.png" alt="MediSafe Logo" class="w-8 h-8 rounded-xl bg-white/10 p-1 smooth" />
-      <h1 class="text-lg sm:text-xl font-semibold tracking-tight">MediSafe — ข้อมูลฉุกเฉิน</h1>
-      <span class="ml-auto text-xs opacity-90">เวอร์ชัน 1.0</span>
+      <img src="medisafelogo.png" alt="MediSafe Logo" class="w-14 h-14 rounded-xl bg-white/10 p-1 smooth" />
+      <h1 class="text-lg sm:text-xl font-semibold tracking-tight">MediSafe</h1>
+      <span class="ml-auto text-xs opacity-90">เวอร์ชัน 1.0.1</span>
     </div>
   </header>
 
@@ -83,7 +83,7 @@
         <div class="w-8 h-8 rounded-lg brand-bg text-white flex items-center justify-center text-sm font-bold">MS</div>
         <h2 class="text-xl font-semibold brand">ข้อมูลส่วนบุคคล</h2>
       </div>
-      <p class="text-sm text-gray-600 mb-4">กรอกครั้งเดียว ระบบบันทึกไว้ในเครื่อง (LocalStorage) เพื่อใช้กับวิดเจ็ตและการแจ้งเตือน</p>
+      <p class="text-sm text-gray-600 mb-4">กรอกครั้งเดียว ระบบจะบันทึกไว้ในเครื่อง (LocalStorage) เพื่อใช้กับวิดเจ็ตและการแจ้งเตือน โดยไม่เก็บข้อมูลผู้ใช้</p>
 
       <form id="profileForm" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
@@ -275,37 +275,39 @@
     <section id="tab-emergency" class="tab card glass p-4 sm:p-6 hidden">
       <div class="flex items-center gap-2 mb-3">
         <div class="w-8 h-8 rounded-lg brand-bg text-white flex items-center justify-center text-sm font-bold">SOS</div>
-        <h2 class="text-xl font-semibold brand">เบอร์ฉุกเฉินสำคัญ</h2>
+        <h2 class="text-xl font-semibold brand">เบอร์ฉุกเฉินที่สำคัญ</h2>
       </div>
       <div class="grid sm:grid-cols-2 gap-3">
         <a class="card border p-4 flex items-center gap-3 hover:bg-gray-50 smooth elev press" href="tel:1669">
-          <img src="medisafelogo.png" class="w-12 h-12 rounded-2xl object-cover bg-gray-100" alt="" />
+          <img src="สพฉ.jpg" class="w-12 h-12 rounded-2xl object-cover bg-gray-100" alt="" />
           <div>
             <div class="font-medium">สถาบันการแพทย์ฉุกเฉินแห่งชาติ <span class="text-gray-400 font-semibold">1669</span></div>
             <div class="text-sm text-gray-600">ทั่วประเทศ</div>
           </div>
         </a>
-        <a class="card border p-4 flex items-center gap-3 hover:bg-gray-50 smooth elev press" href="tel:1646">
-          <div class="w-12 h-12 rounded-2xl brand-bg text-white flex items-center justify-center font-bold">1646</div>
-          <div><div class="font-medium">หน่วยแพทย์ฉุกเฉิน (กทม.)</div></div>
-        </a>
+      
         <a class="card border p-4 flex items-center gap-3 hover:bg-gray-50 smooth elev press" href="tel:1554">
+         <img src="วชิระ.jpg" class="w-12 h-12 rounded-2xl object-cover bg-gray-100" alt="" />
           <div class="w-12 h-12 rounded-2xl brand-bg text-white flex items-center justify-center font-bold">1554</div>
           <div><div class="font-medium">หน่วยแพทย์กู้ชีพ วชิรพยาบาล</div></div>
         </a>
         <a class="card border p-4 flex items-center gap-3 hover:bg-gray-50 smooth elev press" href="tel:1367">
+        <img src="พิษมหิดล.jpg" class="w-12 h-12 rounded-2xl object-cover bg-gray-100" alt="" />
           <div class="w-12 h-12 rounded-2xl brand-bg text-white flex items-center justify-center font-bold">1367</div>
           <div><div class="font-medium">ศูนย์พิษวิทยา รพ.รามาธิบดี</div></div>
         </a>
         <a class="card border p-4 flex items-center gap-3 hover:bg-gray-50 smooth elev press" href="tel:1667">
+         <img src="จิต.jpg" class="w-12 h-12 rounded-2xl object-cover bg-gray-100" alt="" />
           <div class="w-12 h-12 rounded-2xl brand-bg text-white flex items-center justify-center font-bold">1667</div>
           <div><div class="font-medium">สายด่วนกรมสุขภาพจิต</div></div>
         </a>
         <a class="card border p-4 flex items-center gap-3 hover:bg-gray-50 smooth elev press" href="tel:1784">
+        <img src="สพฉ.jpg" class="w-12 h-12 rounded-2xl object-cover bg-gray-100" alt="" />
           <div class="w-12 h-12 rounded-2xl brand-bg text-white flex items-center justify-center font-bold">1784</div>
           <div><div class="font-medium">กรมป้องกันและบรรเทาสาธารณภัย</div></div>
         </a>
         <a class="card border p-4 flex items-center gap-3 hover:bg-gray-50 smooth elev press" href="tel:1418">
+        <img src="ปอ.jpg" class="w-12 h-12 rounded-2xl object-cover bg-gray-100" alt="" />
           <div class="w-12 h-12 rounded-2xl brand-bg text-white flex items-center justify-center font-bold">1418</div>
           <div><div class="font-medium">มูลนิธิปอเต๊กตึ๊ง</div></div>
         </a>
@@ -319,7 +321,7 @@
     <!-- PWA Install / status -->
     <div class="fixed left-4 bottom-4 card p-3 bg-white border w-[300px] smooth elev" id="pwaBox" hidden>
       <div class="font-medium mb-1">ติดตั้งเป็นแอป (PWA)</div>
-      <p class="text-sm text-gray-700">ติดตั้งบนมือถือเพื่อเปิดได้รวดเร็วและใช้งานออฟไลน์บางส่วน</p>
+      <p class="text-sm text-gray-700">ติดตั้งบนมือถือเพื่อเปิดได้รวดเร็วและใช้งานได้สะดวกมากยิ่งขึ้น</p>
       <div class="mt-2 flex gap-2">
         <button id="btnInstall" class="brand-bg text-white px-3 py-1.5 rounded-xl text-sm smooth press">ติดตั้ง</button>
         <button id="btnHidePwa" class="px-3 py-1.5 rounded-xl border text-sm smooth press">ภายหลัง</button>
@@ -330,7 +332,7 @@
   <footer class="max-w-5xl mx-auto px-4 pb-10 pt-2 text-xs text-gray-500">
     <div class="flex items-center gap-2">
       <img src="medisafelogo.png" alt="" class="w-4 h-4 rounded-sm opacity-80" />
-      <span>© 2025 MediSafe — ใช้เพื่อการช่วยเหลือฉุกเฉินเท่านั้น ไม่ใช่เครื่องมือแพทย์</span>
+      <span>© 2025 MediSafe </span>
     </div>
   </footer>
 
