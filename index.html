@@ -141,8 +141,12 @@
       </form>
 
       <div class="mt-6">
-        <h3 class="font-semibold mb-2">พรีวิวการ์ดฉุกเฉิน</h3>
-        <div id="profileCard" class="card p-4 border smooth elev">
+        <div class="flex items-center justify-between">
+          <h3 class="font-semibold">พรีวิวการ์ดฉุกเฉิน</h3>
+          <span class="text-xs text-gray-500">แตะเพื่อแสดงเต็มจอ</span>
+        </div>
+        <!-- ทำให้กดได้เพื่อเข้าหน้าเต็มจอ -->
+        <div id="profileCard" class="card p-4 border smooth elev cursor-pointer select-none" role="button" tabindex="0" aria-label="เปิดการ์ดฉุกเฉินแบบเต็มจอ">
           <div class="flex items-center gap-3">
             <img src="medisafelogo.png" alt="MediSafe" class="w-12 h-12 rounded-2xl object-cover bg-gray-100" />
             <div>
@@ -275,7 +279,6 @@
         <h2 class="text-xl font-semibold brand">เบอร์ฉุกเฉินที่สำคัญ</h2>
       </div>
 
-      <!-- การ์ดเทมเพลตเดียวกันทั้งหมด -->
       <div class="grid sm:grid-cols-2 gap-3">
         <a class="card border p-4 flex items-center gap-3 hover:bg-gray-50 smooth elev press" href="tel:1669" aria-label="โทร 1669 สถาบันการแพทย์ฉุกเฉินแห่งชาติ">
           <img src="สพฉ.jpg" class="w-12 h-12 rounded-2xl object-cover bg-gray-100" alt="" />
@@ -342,7 +345,7 @@
     </div>
 
     <!-- iOS Install Guide (modal) -->
-    <div id="iosGuide" class="fixed inset-0 z-30 hidden">
+    <div id="iosGuide" class="fixed inset-0 z-30 hidden" aria-hidden="true">
       <div class="absolute inset-0 bg-black/40"></div>
       <div class="relative z-10 max-w-sm mx-auto mt-24 card bg-white border p-4">
         <div class="text-lg font-semibold mb-1">เพิ่มไปยังหน้าจอโฮม (iOS)</div>
@@ -364,6 +367,60 @@
       <span>© 2025 MediSafe </span>
     </div>
   </footer>
+
+  <!-- FULLSCREEN EMERGENCY CARD OVERLAY -->
+  <div id="fsCard" class="fixed inset-0 z-40 hidden" aria-hidden="true">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-black/80"></div>
+
+    <!-- Content -->
+    <div class="relative z-10 w-full h-full flex items-center justify-center p-4">
+      <div class="relative w-full h-full max-w-[92rem] max-h-[54rem] bg-white rounded-2xl overflow-hidden shadow-2xl">
+        <!-- Top bar -->
+        <div class="absolute top-0 left-0 right-0 px-6 py-3 flex items-center gap-3 brand-bg text-white">
+          <img src="medisafelogo.png" class="w-10 h-10 rounded-lg bg-white/10 p-1" alt="">
+          <div class="text-lg font-semibold">MediSafe – การ์ดฉุกเฉิน</div>
+          <button id="fsClose" class="ml-auto px-3 py-1.5 rounded-lg bg-white/15 hover:bg-white/25 smooth">ปิด</button>
+        </div>
+
+        <!-- Main info -->
+        <div class="w-full h-full pt-20 pb-6 px-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-8 flex flex-col justify-center">
+            <div class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight" id="fs-name">—</div>
+            <div class="mt-2 text-xl sm:text-2xl text-gray-600" id="fs-meta">—</div>
+
+            <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4 text-lg">
+              <div class="p-4 rounded-2xl border">
+                <div class="text-gray-500 text-sm">แพ้ยา</div>
+                <div class="font-semibold" id="fs-allergy">—</div>
+              </div>
+              <div class="p-4 rounded-2xl border">
+                <div class="text-gray-500 text-sm">โรคประจำตัว</div>
+                <div class="font-semibold" id="fs-cond">—</div>
+              </div>
+              <div class="p-4 rounded-2xl border">
+                <div class="text-gray-500 text-sm">เบอร์ติดต่อ</div>
+                <div class="font-semibold" id="fs-phone">—</div>
+              </div>
+              <div class="p-4 rounded-2xl border">
+                <div class="text-gray-500 text-sm">ฉุกเฉิน (ICE)</div>
+                <div class="font-semibold" id="fs-ice">—</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="lg:col-span-4 flex items-center justify-center">
+            <div class="w-56 h-56 sm:w-64 sm:h-64 lg:w-72 lg:h-72 rounded-3xl brand-bg text-white flex items-center justify-center text-6xl font-extrabold shadow-xl">
+              MS
+            </div>
+          </div>
+        </div>
+
+        <!-- Banner (Ad) -->
+        <img src="banner.jpg" alt="Banner" class="absolute right-6 bottom-6 w-[44vw] max-w-[520px] min-w-[260px] rounded-2xl shadow-2xl smooth">
+      </div>
+    </div>
+  </div>
 
   <!-- แยกสคริปต์ออกไปที่ app.js -->
   <script src="app.js" defer></script>
